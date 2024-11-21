@@ -1,0 +1,25 @@
+- name: Create local user accounts
+  hosts: all
+  tasks:
+    - name: Create local admin users on Windows desktops
+      when: "'windows' in group_names"
+      win_user:
+        name: "{{ item.name }}"
+        password: WGU123
+        groups:
+          - Administrators
+        state: present
+        password_never_expires: yes
+        update_password: on_create
+      with_items:
+        - { name: 'DesktopUser1' }
+        - { name: 'DesktopUser2' }
+        - { name: 'DesktopUser3' }
+        - { name: 'DesktopUser4' }
+      register: windows_result
+
+- name: Debug output for Windows
+  hosts: windows
+  tasks:
+    - debug:
+        var: windows_result
